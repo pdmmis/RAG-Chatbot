@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+nicegui
+python-dotenv
+python == 3.13
