@@ -7,11 +7,13 @@ class ParsedPDF(BaseModel):
     pages: int
     text: str
 def parse_pdf(file_path: Path) -> ParsedPDF:
+    print("hellio",file_path)
     if not file_path.exists() or not file_path.is_file():
         raise FileNotFoundError(f"File {file_path} does not exist.")
     if file_path.stat().st_size > MAX_SIZE_MB * 1024 * 1024:
         raise ValueError(f"File size exceeds the maximum limit of {MAX_SIZE_MB} MB.")
     doc = fitz.open(file_path)
+    print("Document opened:", doc)
     text = ""
     for page_num in range(doc.page_count):
         page = doc.load_page(page_num)

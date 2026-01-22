@@ -4,8 +4,16 @@ import asyncio
 upload_status = ui.label("")
 async def upload_file(file):
     upload_status.text = "Uploading..."
+    file_bytes = await file.file.read()
     async with httpx.AsyncClient() as client:
-        files = {'file': (file.name,file.content,"application/pdf")}
+        files = {
+            "file": (
+                file.file.name, 
+                file_bytes,                   
+                "application/pdf"       
+            )
+        }
+        # files = {'file': (file.file.name,file.file.content,"application/pdf")}
         response = await client.post("http://localhost:8000/upload/pdf", files=files)
     if response.status_code == 200:
         # upload_status.text = f"Uploaded: {response.json()['file_name']} with {response.json()['pages']} pages."

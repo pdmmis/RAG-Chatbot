@@ -19,4 +19,4 @@ def get_agent() -> Agent:
     return __agent
 def add_document(text:str):
     agent=get_agent()
-    agent.add_knowledge(text)
+    agent.add_to_knowledge(result=text, query="")
