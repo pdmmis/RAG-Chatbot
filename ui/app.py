@@ -1,7 +1,18 @@
 from nicegui import ui
 import httpx
 import asyncio
-
+upload_status = ui.label("")
+async def upload_file(file):
+    upload_status.text = "Uploading..."
+    async with httpx.AsyncClient() as client:
+        files = {'file': (file.name,file.content,"application/pdf")}
+        response = await client.post("http://localhost:8000/upload/pdf", files=files)
+    if response.status_code == 200:
+        # upload_status.text = f"Uploaded: {response.json()['file_name']} with {response.json()['pages']} pages."
+        upload_status.text = "PDF uploaded successfully."
+    else:
+        upload_status.text = f"Error: {response.text}"
+ui.upload(on_upload=upload_file).props("accept=.pdf")
 # ui.label("RAG Chatbot UI is running ")
 # ui.run()
 API_URL = "http://localhost:8000/chat/stream"

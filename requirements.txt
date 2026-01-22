@@ -6,3 +6,4 @@ agno
 openai
 pytest
 python == 3.13
+pymupdf
