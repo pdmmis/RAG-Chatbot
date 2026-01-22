@@ -1,3 +1,37 @@
 from nicegui import ui
-ui.label("RAG Chatbot UI is running ")
+import httpx
+import asyncio
+
+# ui.label("RAG Chatbot UI is running ")
+# ui.run()
+API_URL = "http://localhost:8000/chat/stream"
+ui.label("RAG Chatbot")
+chat_box = ui.column()
+status_label = ui.label("Status: Idle")
+prompt_input = ui.input(label="Enter your question here").props("autofocus")
+async def stream_response(prompt:str):
+    status_label.text="Receivied"
+    await asyncio.sleep(0.1)
+    async with httpx.AsyncClient(timeout=None) as client:
+        async with client.stream("GET",API_URL,params={"prompt":prompt}) as response:
+            status_label.text="Generating"
+            with chat_box:
+                message_label = ui.label("")
+            async for chunk in response.aiter_text():
+                if chunk:
+
+                    # chat_box.add_ui_element(ui.label(chunk))
+                    message_label.text += chunk
+                    
+    status_label.text="Done"
+
+# def on_send():
+#     chat_box.clear()
+#     ui.run_task(stream_response(prompt_input.value))
+# ui.button("Send",on_click=on_send)
+# ui.run()
+async def on_send():
+    await stream_response(prompt_input.value)
+
+ui.button('Send', on_click=on_send)
 ui.run()
