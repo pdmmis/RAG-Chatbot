@@ -71,38 +71,38 @@ class ChatRequest(BaseModel):
     prompt: str
 
 
-# @app.post("/chat/stream")
-# async def chat_stream(req: ChatRequest):
-#     return StreamingResponse(
-#         agent_stream(req.prompt),
-#         media_type="text/plain"
-#     )
-from agent.agent import get_agent, get_document_text
-
 @app.post("/chat/stream")
 async def chat_stream(req: ChatRequest):
-    """Stream response, grounded in document context."""
-
-    agent = get_agent()
-    doc_text = get_document_text()
-
-    if doc_text:
-        final_prompt = (
-            "The following document was uploaded by the user. "
-            "Answer the question strictly using this document.\n\n"
-            "----- DOCUMENT START -----\n"
-            f"{doc_text}\n"
-            "----- DOCUMENT END -----\n\n"
-            f"User question: {req.prompt}"
-        )
-    else:
-        final_prompt = req.prompt
-
-    async def token_generator():
-        async for token in agent.astream(final_prompt):
-            yield token
-
     return StreamingResponse(
-        token_generator(),
-        media_type="text/plain",
+        agent_stream(req.prompt),
+        media_type="text/plain"
     )
+# from agent.agent import get_agent, get_document_text
+
+# @app.post("/chat/stream")
+# async def chat_stream(req: ChatRequest):
+#     """Stream response, grounded in document context."""
+
+#     agent = get_agent()
+#     doc_text = get_document_text()
+
+#     if doc_text:
+#         final_prompt = (
+#             "The following document was uploaded by the user. "
+#             "Answer the question strictly using this document.\n\n"
+#             "----- DOCUMENT START -----\n"
+#             f"{doc_text}\n"
+#             "----- DOCUMENT END -----\n\n"
+#             f"User question: {req.prompt}"
+#         )
+#     else:
+#         final_prompt = req.prompt
+
+#     async def token_generator():
+#         async for token in agent.astream(final_prompt):
+#             yield token
+
+#     return StreamingResponse(
+#         token_generator(),
+#         media_type="text/plain",
+#     )
